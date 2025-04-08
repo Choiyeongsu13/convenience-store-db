@@ -315,13 +315,14 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`employee` (
 ENGINE = InnoDB;
 
 INSERT INTO `employee` (
-  employee_id, employee_name, employee_position, employee_phone, employee_hire_date
+  employee_id, employee_name, employee_phone_number, employee_rank,
+  employee_salary, employee_work_time, employee_work_evaluation
 )
 VALUES
-  (1, '오성환', '매니저', '010-1234-5678', '2023-03-15'),
-  (2, '최영수', '알바', '010-9308-5432', '2024-01-10'),
-  (3, '양동민', '알바', '010-1122-3344', '2024-11-05'),
-  (4, '이호연', '점장', '010-5566-7788', '2022-07-01');
+  (1, '오성환', '010-1234-5678', '매니저', 3000000, '풀타임', '성실함'),
+  (2, '최영수', '010-9308-5432', '알바', 1200000, '파트타임', '근무태도 양호'),
+  (3, '양동민', '010-1122-3344', '알바', 1200000, '파트타임', '시간 엄수'),
+  (4, '이호연', '010-5566-7788', '점장', 3500000, '풀타임', '매우 우수');
 
 -- -----------------------------------------------------
 -- Table `convenience_store_management`.`equipment`
@@ -343,15 +344,14 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`equipment` (
 ENGINE = InnoDB;
 
 INSERT INTO `equipment` (
-  equipment_id, equipment_name, equipment_status, equipment_purchase_date
+  equipment_id, equipment_name, equipment_note, equipment_date, manager_id
 )
 VALUES
-  (1, 'POS 기기', '정상', '2023-06-10'),
-  (2, '냉장고', '고장', '2022-12-20'),
-  (3, 'CCTV', '정상', '2021-11-01'),
-  (4, '전자레인지', '정상', '2024-03-08'),
-  (5, '에어컨', '점검필요', '2020-07-22');
-  
+  (1, 'POS 기기', '정상', '2023-06-10', 1),
+  (2, '냉장고', '고장', '2022-12-20', 2),
+  (3, 'CCTV', '정상', '2021-11-01', 3),
+  (4, '전자레인지', '정상', '2024-03-08', 4),
+  (5, '에어컨', '점검필요', '2020-07-22', 1);
 -- -----------------------------------------------------
 -- Table `convenience_store_management`.`monthly_profit`
 -- -----------------------------------------------------
@@ -365,13 +365,17 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`monthly_profit` (
 ENGINE = InnoDB;
 
 INSERT INTO `monthly_profit` (
-  profit_id, profit_month, total_sales, total_expenses
+  monthly_profit_year_month,
+  monthly_profit_profit,
+  monthly_profit_order_cost,
+  monthly_profit_laber_cost,
+  monthly_profit_net_profit
 )
 VALUES
-  (1, '2025-01', 4500000, 3200000),
-  (2, '2025-02', 4800000, 3500000),
-  (3, '2025-03', 5200000, 3700000),
-  (4, '2025-04', 1300000, 800000);
+  ('2025-01', 4500000, 2240000, 960000, 1300000),
+  ('2025-02', 4800000, 2450000, 1050000, 1300000),
+  ('2025-03', 5200000, 2590000, 1110000, 1500000),
+  ('2025-04', 1300000, 560000, 240000, 500000);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
