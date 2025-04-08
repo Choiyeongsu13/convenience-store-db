@@ -25,7 +25,10 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`classification` (
   UNIQUE INDEX `catalog_name_UNIQUE` (`catalog_name` ASC) VISIBLE)
 ENGINE = InnoDB;
 
-INSERT INTO classification (catalog_number, catalog_name)
+INSERT INTO `classification` (
+`catalog_number`, 
+`catalog_name`
+)
 VALUES
     (1,'과자'),
     (2,'음료'),
@@ -37,6 +40,7 @@ VALUES
     (8,'유제품');
 
 
+
 -- -----------------------------------------------------
 -- Table `convenience_store_management`.`event`
 -- -----------------------------------------------------
@@ -46,7 +50,10 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`event` (
   PRIMARY KEY (`event_id`))
 ENGINE = InnoDB;
 
-INSERT INTO event (event_id, event_name)
+INSERT INTO `event` (
+`event_id`, 
+`event_name`
+)
 VALUES
     (1, '1+1'),
     (2, '2+1'),
@@ -54,6 +61,79 @@ VALUES
     (4, '할인 행사'),
     (5, '행사 없음');
 
+-- -----------------------------------------------------
+-- Table `convenience_store_management`.`product`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `convenience_store_management`.`product` (
+  `product_id` INT NOT NULL,
+  `product_name` VARCHAR(30) NOT NULL,
+  `product_price` INT CHECK (`product_price` >= 0) NOT NULL,
+  `classification_number` INT NOT NULL,
+  PRIMARY KEY (`product_id`),
+  UNIQUE INDEX `product_name_UNIQUE` (`product_name` ASC) VISIBLE,
+  INDEX `fk_product_classification1_idx` (`classification_number` ASC) VISIBLE,
+  CONSTRAINT `fk_product_classification1`
+    FOREIGN KEY (`classification_number`)
+    REFERENCES `convenience_store_management`.`classification` (`catalog_number`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+INSERT INTO `product` (
+`product_id`,
+`product_name`,
+`classification_number`,
+`product_price`
+ )
+VALUES
+	-- 과자
+    (1 , '먹태깡' , 1,1600),
+    (2 , '자갈치', 1,1600),
+    (3 , '알새우칩', 1,1500),
+    (4 , '오레오', 1,1600),
+    (5 , '프링글스' , 1, 2300),
+    -- 음료
+    (6 , '코카콜라' , 2,2400),
+    (7 , '펩시콜라' , 2, 1800),
+    (8 , '포카리스웨트' , 2, 1700),
+    (9 , '초록매실' , 2, 2100),
+    (10 , '레쓰비 그란데' , 2, 1600),
+    -- 생필품
+    (11 , '페리오 칫솔', 3, 1500),
+    (12 , '2080 치약' , 3, 3000),
+    (13 , '유한락스 1L', 3, 1000),
+    (14 , '다우니 세제' , 3, 23500),
+    (15 , '자연퐁 세제', 3, 6600),
+    -- 주류
+    (16 , '참이슬' , 4, 1700),
+    (17 , '복분자' , 4, 8500),
+    (18 , '카스 500', 4, 2300),
+    (19 , '스카치 블루 12년', 4, 34500),
+    (20 , '목포 막걸리', 4, 1600),
+    -- 즉석 식품
+    (21 , '참치마요 삼각김밥', 5, 1200),
+    (22 , '불고기 삼각김밥', 5, 1300),
+    (23 , '닭가슴살 핫바', 5, 2000),
+    (24 , '치즈 핫바', 5, 2200),
+    (25 , '에그마요 샌드위치', 5, 2800),
+    -- 아이스크림
+    (26, '월드콘', 6, 1300),
+    (27, '붕어싸만코', 6, 1300),
+    (28, '스크류바', 6, 600),
+    (29, '비비빅', 6, 600),
+    (30, '더위사냥', 6, 900),
+    -- 라면
+    (31, '신라면 컵', 7, 1300),
+    (32, '진라면 매운맛', 7, 1100),
+    (33, '불닭볶음면', 7, 1500),
+    (34, '짜파게티', 7, 1300),
+    (35, '육개장 사발면', 7, 1100),
+    -- 유제품
+    (36, '서울우유 200ml', 8, 1100),
+    (37, '바나나맛 우유', 8, 1400),
+    (38, '초코우유', 8, 1300),
+    (39, '요플레 플레인', 8, 1200),
+    (40, '상하치즈 슬라이스', 8, 2500);
 
 
 -- -----------------------------------------------------
@@ -61,11 +141,11 @@ VALUES
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `convenience_store_management`.`actual_sale_product` (
   `actual_sale_product_id` INT NOT NULL,
-  `actual_sale_product_name` VARCHAR(30) NULL,
-  `actual_sale_product_price` INT NULL,
+  `actual_sale_product_name` VARCHAR(30) NOT NULL,
+  `actual_sale_product_price` INT CHECK (`actual_sale_product_price` >= 0) NOT NULL,
   `actual_sale_product_event_period` DATETIME NULL,
   `actual_sale_product_stock` INT NULL,
-  `actual_sale_productcol_expriation_date` DATETIME NULL,
+  `actual_sale_product_expriation_date` DATETIME NULL,
   `classification_number` INT NOT NULL,
   `event_id` INT NOT NULL,
   PRIMARY KEY (`actual_sale_product_id`),
@@ -83,15 +163,15 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`actual_sale_product` 
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-INSERT INTO actual_sale_product (
-    actual_sale_product_id,
-    actual_sale_product_name,
-    actual_sale_product_price,
-    actual_sale_product_event_period,
-    actual_sale_product_stock,
-    actual_sale_productcol_expriation_date,
-    classification_number,
-    event_id
+INSERT INTO `actual_sale_product` (
+    `actual_sale_product_id`,
+    `actual_sale_product_name`,
+    `actual_sale_product_price`,
+    `actual_sale_product_event_period`,
+    `actual_sale_product_stock`,
+    `actual_sale_product_expriation_date`,
+    `classification_number`,
+    `event_id`
 )
 VALUES
     -- 과자
@@ -151,78 +231,6 @@ VALUES
     (40, '상하치즈 슬라이스', 2500, NULL, 50, '2025-07-01', 8, 5);
 
 
-
-
--- -----------------------------------------------------
--- Table `convenience_store_management`.`product`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `convenience_store_management`.`product` (
-  `product_id` INT NOT NULL,
-  `product_name` VARCHAR(30) NULL,
-  `product_price` INT NULL,
-  `classification_number` INT NOT NULL,
-  PRIMARY KEY (`product_id`),
-  INDEX `fk_product_classification_idx` (`classification_number` ASC) VISIBLE,
-  UNIQUE INDEX `product_name_UNIQUE` (`product_name` ASC) VISIBLE,
-  CONSTRAINT `fk_product_classification`
-    FOREIGN KEY (`classification_number`)
-    REFERENCES `convenience_store_management`.`classification` (`catalog_number`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-INSERT INTO product (product_id, product_name, classification_number, product_price)
-VALUES
-	-- 과자
-    (1 , '먹태깡' , 1,1600),
-    (2 , '자갈치', 1,1600),
-    (3 , '알새우칩', 1,1500),
-    (4 , '오레오', 1,1600),
-    (5 , '프링글스' , 1, 2300),
-    -- 음료
-    (6 , '코카콜라' , 2,2400),
-    (7 , '펩시콜라' , 2, 1800),
-    (8 , '포카리스웨트' , 2, 1700),
-    (9 , '초록매실' , 2, 2100),
-    (10 , '레쓰비 그란데' , 2, 1600),
-    -- 생필품
-    (11 , '페리오 칫솔', 3, 1500),
-    (12 , '2080 치약' , 3, 3000),
-    (13 , '유한락스 1L', 3, 1000),
-    (14 , '다우니 세제' , 3, 23500),
-    (15 , '자연퐁 세제', 3, 6600),
-    -- 주류
-    (16 , '참이슬' , 4, 1700),
-    (17 , '복분자' , 4, 8500),
-    (18 , '카스 500', 4, 2300),
-    (19 , '스카치 블루 12년', 4, 34500),
-    (20 , '목포 막걸리', 4, 1600),
-    -- 즉석 식품
-    (21 , '참치마요 삼각김밥', 5, 1200),
-    (22 , '불고기 삼각김밥', 5, 1300),
-    (23 , '닭가슴살 핫바', 5, 2000),
-    (24 , '치즈 핫바', 5, 2200),
-    (25 , '에그마요 샌드위치', 5, 2800),
-    -- 아이스크림
-    (26, '월드콘', 6, 1300),
-    (27, '붕어싸만코', 6, 1300),
-    (28, '스크류바', 6, 600),
-    (29, '비비빅', 6, 600),
-    (30, '더위사냥', 6, 900),
-    -- 라면
-    (31, '신라면 컵', 7, 1300),
-    (32, '진라면 매운맛', 7, 1100),
-    (33, '불닭볶음면', 7, 1500),
-    (34, '짜파게티', 7, 1300),
-    (35, '육개장 사발면', 7, 1100),
-    -- 유제품
-    (36, '서울우유 200ml', 8, 1100),
-    (37, '바나나맛 우유', 8, 1400),
-    (38, '초코우유', 8, 1300),
-    (39, '요플레 플레인', 8, 1200),
-    (40, '상하치즈 슬라이스', 8, 2500);
-
-
 -- -----------------------------------------------------
 -- Table `convenience_store_management`.`sales`
 -- -----------------------------------------------------
@@ -230,9 +238,9 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`sales` (
   `sales_id` INT NOT NULL,
   `sales_date` DATE NULL,
   `sales_time` DATETIME NULL,
-  `sales_count` INT NULL,
+  `sales_count` INT CHECK (`sales_count` >= 0) NOT NULL,
   `sales_revenue` INT NULL,
-  `sales_payment_method` ENUM('현금', '카드') NULL,
+  `sales_payment_method` ENUM('현금', '카드') NOT NULL,
   `actual_sale_product_id` INT NOT NULL,
   PRIMARY KEY (`sales_id`),
   INDEX `fk_sales_actual_sale_product1_idx` (`actual_sale_product_id` ASC) VISIBLE,
@@ -243,14 +251,14 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`sales` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-INSERT INTO sales (
-    sales_id,
-    sales_date,
-    sales_time,
-    sales_count,
-    sales_revenue,
-    sales_payment_method,
-    actual_sale_product_id
+INSERT INTO `sales` (
+    `sales_id`,
+    `sales_date`,
+    `sales_time`,
+    `sales_count`,
+    `sales_revenue`,
+    `sales_payment_method`,
+    `actual_sale_product_id`
 )
 VALUES
     (1, '2025-04-01', '2025-04-01 09:30:00', 2, 3200, '현금', 1),
@@ -265,15 +273,14 @@ VALUES
     (10, '2025-04-05', '2025-04-05 17:55:00', 1, 34500, '카드', 19);
 
 
-
 -- -----------------------------------------------------
 -- Table `convenience_store_management`.`order`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `convenience_store_management`.`order` (
   `order_id` INT NOT NULL,
-  `order_date` DATETIME NULL,
-  `order_quantity` INT NULL,
-  `order_price` INT NULL,
+  `order_date` DATETIME NOT NULL,
+  `order_quantity` INT CHECK (`order_quantity` >= 0) NOT NULL,
+  `order_price` INT CHECK (`order_price` >= 0) NOT NULL,
   `actual_sale_product_id` INT NOT NULL,
   PRIMARY KEY (`order_id`),
   INDEX `fk_order_actual_sale_product1_idx` (`actual_sale_product_id` ASC) VISIBLE,
@@ -285,11 +292,11 @@ CREATE TABLE IF NOT EXISTS `convenience_store_management`.`order` (
 ENGINE = InnoDB;
 
 INSERT INTO `order` (
-    order_id,
-    order_date,
-    order_quantity,
-    order_price,
-    actual_sale_product_id
+    `order_id`,
+    `order_date`,
+    `order_quantity`,
+    `order_price`,
+    `actual_sale_product_id`
 )
 VALUES
     (1, '2025-04-01 08:00:00', 30, 48000, 1),   -- 먹태깡 (1600 × 30)
@@ -304,25 +311,31 @@ VALUES
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `convenience_store_management`.`employee` (
   `employee_id` INT NOT NULL,
-  `employee_name` VARCHAR(20) NULL,
-  `employee_phone_number` VARCHAR(20) NULL,
-  `employee_rank` VARCHAR(10) NULL,
+  `employee_name` VARCHAR(20) NOT NULL,
+  `employee_phone_number` VARCHAR(20) NOT NULL,
+  `employee_rank` VARCHAR(10) NOT NULL,
   `employee_salary` INT NULL,
-  `employee_work_time` VARCHAR(10) NULL,
+  `employee_work_time` INT NULL,
   `employee_work_evaluation` VARCHAR(50) NULL,
   PRIMARY KEY (`employee_id`),
   UNIQUE INDEX `employee_phone_number_UNIQUE` (`employee_phone_number` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 INSERT INTO `employee` (
-  employee_id, employee_name, employee_phone_number, employee_rank,
-  employee_salary, employee_work_time, employee_work_evaluation
+  `employee_id`, 
+  `employee_name`, 
+  `employee_phone_number`, 
+  `employee_rank`,
+  `employee_salary`, 
+  `employee_work_time`, 
+  `employee_work_evaluation`
 )
 VALUES
-  (1, '오성환', '010-1234-5678', '매니저', 3000000, '풀타임', '성실함'),
-  (2, '최영수', '010-9308-5432', '알바', 1200000, '파트타임', '근무태도 양호'),
-  (3, '양동민', '010-1122-3344', '알바', 1200000, '파트타임', '시간 엄수'),
-  (4, '이호연', '010-5566-7788', '점장', 3500000, '풀타임', '매우 우수');
+  (1, '오성환', '010-1234-5678', '매니저', 3000000, 4, '성실함'),
+  (2, '최영수', '010-9308-5432', '알바', 1200000, 8, '근무태도 양호'),
+  (3, '양동민', '010-1122-3344', '알바', 1200000, 8, '시간 엄수'),
+  (4, '이호연', '010-5566-7788', '점장', 3500000, 4, '매우 우수');
+
 
 -- -----------------------------------------------------
 -- Table `convenience_store_management`.`equipment`
@@ -330,21 +343,26 @@ VALUES
 CREATE TABLE IF NOT EXISTS `convenience_store_management`.`equipment` (
   `equipment_id` INT NOT NULL,
   `equipment_date` DATETIME NULL,
-  `equipment_name` VARCHAR(20) NULL,
-  `equipment_count` INT NULL,
+  `equipment_name` VARCHAR(20) NOT NULL,
+  `equipment_count` INT NOT NULL DEFAULT 1,
   `equipment_note` VARCHAR(50) NULL,
   `manager_id` INT NOT NULL,
   PRIMARY KEY (`equipment_id`),
-  INDEX `fk_part_employee1_idx` (`manager_id` ASC) VISIBLE,
-  CONSTRAINT `fk_part_employee1`
+  INDEX `fk_equipment_employee1_idx` (`manager_id` ASC) VISIBLE,
+  CONSTRAINT `fk_equipment_employee1`
     FOREIGN KEY (`manager_id`)
     REFERENCES `convenience_store_management`.`employee` (`employee_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
 INSERT INTO `equipment` (
-  equipment_id, equipment_name, equipment_note, equipment_date, manager_id
+  `equipment_id`, 
+  `equipment_name`, 
+  `equipment_note`, 
+  `equipment_date`, 
+  `manager_id`
 )
 VALUES
   (1, 'POS 기기', '정상', '2023-06-10', 1),
@@ -352,24 +370,26 @@ VALUES
   (3, 'CCTV', '정상', '2021-11-01', 3),
   (4, '전자레인지', '정상', '2024-03-08', 4),
   (5, '에어컨', '점검필요', '2020-07-22', 1);
+
 -- -----------------------------------------------------
 -- Table `convenience_store_management`.`monthly_profit`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `convenience_store_management`.`monthly_profit` (
   `monthly_profit_year_month` VARCHAR(10) NOT NULL,
-  `monthly_profit_profit` INT NULL,
-  `monthly_profit_order_cost` INT NULL,
-  `monthly_profit_laber_cost` INT NULL,
-  `monthly_profit_net_profit` INT NULL,
+  `monthly_profit_profit` INT CHECK (`monthly_profit_profit` >= 0) NULL,
+  `monthly_profit_order_cost` INT CHECK (`monthly_profit_order_cost` >= 0) NULL,
+  `monthly_profit_laber_cost` INT CHECK (`monthly_profit_laber_cost` >= 0) NULL,
+  `monthly_profit_net_profit` INT CHECK (`monthly_profit_net_profit` >= 0) NULL,
   PRIMARY KEY (`monthly_profit_year_month`))
 ENGINE = InnoDB;
 
+
 INSERT INTO `monthly_profit` (
-  monthly_profit_year_month,
-  monthly_profit_profit,
-  monthly_profit_order_cost,
-  monthly_profit_laber_cost,
-  monthly_profit_net_profit
+  `monthly_profit_year_month`,
+  `monthly_profit_profit`,
+  `monthly_profit_order_cost`,
+  `monthly_profit_laber_cost`,
+  `monthly_profit_net_profit`
 )
 VALUES
   ('2025-01', 4500000, 2240000, 960000, 1300000),
